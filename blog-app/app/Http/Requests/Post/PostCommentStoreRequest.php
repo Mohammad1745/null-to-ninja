@@ -24,7 +24,6 @@ class PostCommentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'post_id' => 'required|integer',
             'comment' => 'required|max:50',
         ];
     }

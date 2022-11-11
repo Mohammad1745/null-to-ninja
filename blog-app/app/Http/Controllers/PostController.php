@@ -6,6 +6,7 @@ use App\Http\Requests\Post\PostCommentStoreRequest;
 use App\Http\Requests\Post\PostStoreRequest;
 use App\Http\Requests\Post\PostUpdateRequest;
 use App\Models\Post;
+use App\Models\PostComment;
 use App\Models\PostReaction;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -151,21 +152,22 @@ class PostController extends Controller
     }
 
 
-//    /**
-//     * @param PostCommentStoreRequest $request
-//     * @return RedirectResponse
-//     */
-//    public function comment (PostCommentStoreRequest $request): RedirectResponse
-//    {
-////        $allData = $request->all();
-//
-////        $data =  [
-////            'user_id' => Auth::id(),
-////            'title' => $allData['title'],
-////            'content' => $allData['content']
-////        ];
-////
-////        Post::create($data);
-////        return redirect()->route('post.index')->with('success', "Post added successfully.");
-//    }
+    /**
+     * @param $id
+     * @param PostCommentStoreRequest $request
+     * @return RedirectResponse
+     */
+    public function comment ($id, PostCommentStoreRequest $request): RedirectResponse
+    {
+        $allData = $request->all();
+
+        $data =  [
+            'post_id' => $id,
+            'user_id' => Auth::id(),
+            'content' => $allData['comment']
+        ];
+
+        PostComment::create($data);
+        return redirect()->back()->with('success', "Comment successful.");
+    }
 }

@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Post;
+use App\Models\PostComment;
 use App\Models\PostReaction;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -39,6 +41,12 @@ class HomeController extends Controller
     public function showDetails ($id): View|Factory|Application
     {
         $data['post'] = Post::find($id);
+        $comments = PostComment::where('post_id', $id)->orderBy('id', 'desc')->get();
+        foreach ($comments as $comment) {
+            $comment->author = User::find($comment->user_id);
+        }
+        $data['comments'] = $comments;
+
         return view('post_details', $data);
     }
 }

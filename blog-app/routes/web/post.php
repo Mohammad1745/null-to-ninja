@@ -3,7 +3,7 @@
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->prefix('/post')->as('post.')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('/post')->as('post.')->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('index'); //post.index
     Route::get('/create', [PostController::class, 'create'])->name('create');//post.create
     Route::post('/', [PostController::class, 'store'])->name('store');
