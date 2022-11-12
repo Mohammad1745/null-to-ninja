@@ -12,7 +12,7 @@ Route::middleware(['auth', 'verified'])->prefix('/post')->as('post.')->group(fun
     Route::patch('/update', [PostController::class, 'update'])->name('update');
     Route::get('/{id}/delete', [PostController::class, 'destroy'])->name('delete');
 });
-Route::middleware('auth')->prefix('/post')->as('post.')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('/post')->as('post.')->group(function () {
     Route::get('/{id}/like', [PostController::class, 'like'])->name('like');
     Route::get('/{id}/dislike', [PostController::class, 'dislike'])->name('dislike');
     Route::post('/{id}/comment', [PostController::class, 'comment'])->name('comment');
