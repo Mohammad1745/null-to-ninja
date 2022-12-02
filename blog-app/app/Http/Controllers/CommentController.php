@@ -62,7 +62,7 @@ class CommentController extends Controller
     {
         $allData = $request->all();
 
-        $data =  [
+        $data = [
             'post_comment_id' => $id,
             'user_id' => Auth::id(),
             'content' => $allData['comment']
@@ -72,3 +72,5 @@ class CommentController extends Controller
         return redirect()->back()->with('success', "Comment successful.");
     }
 }
+
+

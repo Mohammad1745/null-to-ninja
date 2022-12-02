@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegistrationRequest;
 use App\Http\Requests\Auth\VerificationRequest;
+use App\Jobs\SendEmailJob;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -66,7 +67,8 @@ class AuthController extends Controller
             'password' => Hash::make($allData['password']),
         ];
         $user = User::create($data);
-        $this->_sendVerificationMail($user->email, $user->name, $code);
+        $sendEmailJob = new SendEmailJob($user->email, $user->name, $code);
+        $this->dispatch($sendEmailJob);
         return redirect()->route('verification')->with('success', "Registration Successful!");
     }
     /**
@@ -103,21 +105,5 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('home')->with('success', "Registration Successful!");
-    }
-
-    /**
-     * @param string $email
-     * @param string $name
-     * @param string $code
-     * @return void
-     */
-    private function _sendVerificationMail (string $email, string $name, string $code): void
-    {
-        $data['appName'] = 'Blog App';
-        $data['code'] = $code;
-        Mail::send('emails.email_verification', $data, function ($message) use ($email, $name) {
-            $message->from('blog@gmail.com', 'Blog App');
-            $message->to($email, $name)->subject('Verification Code');
-        });
     }
 }

@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-require base_path('routes\web\home.php');
-require base_path('routes\web\auth.php');
-require base_path('routes\web\post.php');
-require base_path('routes\web\comment.php');
+require base_path('routes/web/home.php');
+require base_path('routes/web/auth.php');
+require base_path('routes/web/post.php');
+require base_path('routes/web/comment.php');
 
