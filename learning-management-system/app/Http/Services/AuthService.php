@@ -47,8 +47,31 @@ class AuthService
             ];
             $user = User::create($formattedData);
             $sendEmailJob = new SendEmailJob($user->email, $user->name, $code);
-            $this->dispatch($sendEmailJob);
+            dispatch($sendEmailJob);
             return ['success' => true,'message' => "Registration Successful! Please check email for code"];
+        }
+        catch (\Exception $exception) {
+            return ['success' => false,'message' => $exception->getMessage()];
+        }
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function processVerification (array $data): array
+    {
+        try {
+            $user = User::where('email', $data['email'])->where('verification_code', $data['code'])->first();
+            if (!$user) {
+                return ['success' => false,'message' => "Invalid Code"];
+            }
+            $formattedData = [
+                'verification_code' => null,
+                'email_verified' => true
+            ];
+            User::where('id', $user->id)->update($formattedData);
+            return ['success' => true,'message' => "Verification Successful!"];
         }
         catch (\Exception $exception) {
             return ['success' => false,'message' => $exception->getMessage()];

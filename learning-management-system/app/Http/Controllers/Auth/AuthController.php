@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegistrationRequest;
+use App\Http\Requests\Auth\VerificationRequest;
 use App\Http\Services\AuthService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -65,6 +66,27 @@ class AuthController extends Controller
 
         return $response['success'] ?
             redirect()->route('verification')->with('success', $response['message'])
+            : redirect()->back()->with('error', $response['message']);
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function verification (): View|Factory|Application
+    {
+        return view('auth.verification');
+    }
+
+    /**
+     * @param VerificationRequest $request
+     * @return RedirectResponse
+     */
+    public function processVerification (VerificationRequest $request): RedirectResponse
+    {
+        $response = $this->service->processVerification($request->all());
+
+        return $response['success'] ?
+            redirect()->route('login')->with('success', $response['message'])
             : redirect()->back()->with('error', $response['message']);
     }
 }
