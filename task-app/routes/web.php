@@ -16,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 //Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-require base_path('routes\web\auth.php');
-require base_path('routes\web\task.php');
+require base_path('routes/web/auth.php');
+require base_path('routes/web/task.php');
 

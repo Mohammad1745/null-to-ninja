@@ -2,22 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegistrationRequest;
 use App\Http\Requests\Auth\VerificationRequest;
-use App\Jobs\SendEmailJob;
-use App\Models\User;
+use App\Http\Services\AuthService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
+    /**
+     * @var AuthService
+     */
+    private AuthService $service;
+
+    /**
+     * @param AuthService $service
+     */
+    function __construct (AuthService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * @return Application|Factory|View
      */
@@ -32,16 +41,11 @@ class AuthController extends Controller
      */
     public function processLogin (LoginRequest $request): RedirectResponse
     {
-        $allData = $request->all();
-        $user = User::where('email', $allData['email'])->first();
-        if (!$user) {
-            return redirect()->back()->with('error', "Email not found");
-        }
-        if (!Hash::check($allData['password'], $user->password)) {
-            return redirect()->back()->with('error', "Wrong Email Or Password");
-        }
-        Auth::login($user);
-        return redirect()->route('home')->with('success', "Login Successful!");
+        $response = $this->service->processLogin($request->all());
+
+        return $response['success'] ?
+            redirect()->route('home')->with('success', $response['message'])
+            : redirect()->back()->with('error', $response['message']);
     }
 
     /**
@@ -58,19 +62,13 @@ class AuthController extends Controller
      */
     public function processRegistration (RegistrationRequest $request): RedirectResponse
     {
-        $allData = $request->all();
-        $code = randomNumber(4);
-        $data = [
-            'name' => $allData['name'],
-            'email' => $allData['email'],
-            'verification_code' => $code,
-            'password' => Hash::make($allData['password']),
-        ];
-        $user = User::create($data);
-        $sendEmailJob = new SendEmailJob($user->email, $user->name, $code);
-        $this->dispatch($sendEmailJob);
-        return redirect()->route('verification')->with('success', "Registration Successful!");
+        $response = $this->service->processRegistration($request->all());
+
+        return $response['success'] ?
+            redirect()->route('verification')->with('success', $response['message'])
+            : redirect()->back()->with('error', $response['message']);
     }
+
     /**
      * @return Application|Factory|View
      */
@@ -85,25 +83,10 @@ class AuthController extends Controller
      */
     public function processVerification (VerificationRequest $request): RedirectResponse
     {
-        $allData = $request->all();
-        $user = User::where('email', $allData['email'])->where('verification_code', $allData['code'])->first();
-        if (!$user) {
-            return redirect()->back()->with('error', "Invalid Code");
-        }
-        $data = [
-            'verification_code' => null,
-            'email_verified' => true
-        ];
-        User::where('id', $user->id)->update($data);
-        return redirect()->route('login')->with('success', "Verification Successful!");
-    }
+        $response = $this->service->processVerification($request->all());
 
-    /**
-     * @return RedirectResponse
-     */
-    public function logout (): RedirectResponse
-    {
-        Auth::logout();
-        return redirect()->route('home')->with('success', "Registration Successful!");
+        return $response['success'] ?
+            redirect()->route('login')->with('success', $response['message'])
+            : redirect()->back()->with('error', $response['message']);
     }
 }
