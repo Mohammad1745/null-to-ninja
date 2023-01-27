@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Post\PostCommentStoreRequest;
 use App\Http\Requests\Post\PostStoreRequest;
 use App\Http\Requests\Post\PostUpdateRequest;
+use App\Http\Services\PostService;
 use App\Models\Post;
 use App\Models\PostComment;
 use App\Models\PostReaction;
@@ -16,15 +17,24 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+    private $service;
+
+    public function __construct(PostService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * @return Application|Factory|View
      */
     public function index (): View|Factory|Application
     {
-        $data['header'] = "Post List";
-        $data['posts'] = Post::where('user_id', Auth::id())->get();
+        return view('post.index');
+    }
 
-        return view('post.index', $data);
+    public function list ()
+    {
+        return response()->json( $this->service->getList());
     }
 
     /**
