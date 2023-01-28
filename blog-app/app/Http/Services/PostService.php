@@ -24,4 +24,19 @@ class PostService extends Service
             return $this->responseError($exception->getMessage());
         }
     }
+
+    public function store (array $data)
+    {
+        try {
+            Post::create([
+                'user_id' => Auth::id(),
+                'title' => $data['title'],
+                'content' => $data['content']
+            ]);
+            return $this->responseSuccess("Post added successfully!");
+        }
+        catch (\Exception $exception) {
+            return $this->responseError( $exception->getMessage());
+        }
+    }
 }

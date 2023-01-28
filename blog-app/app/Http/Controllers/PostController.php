@@ -12,6 +12,7 @@ use App\Models\PostReaction;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,35 +33,21 @@ class PostController extends Controller
         return view('post.index');
     }
 
-    public function list ()
+    /**
+     * @return JsonResponse
+     */
+    public function list (): JsonResponse
     {
         return response()->json( $this->service->getList());
     }
 
     /**
-     * @return Factory|View|Application
-     */
-    public function create (): Factory|View|Application
-    {
-        return view('post.create');
-    }
-
-    /**
      * @param PostStoreRequest $request
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function store (PostStoreRequest $request): RedirectResponse
+    public function store (PostStoreRequest $request): JsonResponse
     {
-        $allData = $request->all();
-
-        $data =  [
-            'user_id' => Auth::id(),
-            'title' => $allData['title'],
-            'content' => $allData['content']
-        ];
-
-        Post::create($data);
-        return redirect()->route('post.index')->with('success', "Post added successfully.");
+        return response()->json( $this->service->store( $request->all()));
     }
 
     /**

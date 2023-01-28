@@ -4,11 +4,23 @@
     Post List
 @endsection
 
+@section('style')
+    <style>
+        .create-form-card {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 50vw;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             Post List
-            <a href="{{route('post.create')}}">Create Post</a>
+            <span class="btn btn-info" id="create_btn">Create Post</span>
         </div>
         <div class="card-body">
 {{--            <ul class="list-unstyled">--}}
@@ -40,6 +52,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             loadTasks()
+            handleCreateButton()
         })
 
         function loadTasks () {
@@ -62,6 +75,7 @@
 
         function renderTasks(posts) {
             let postsDom = document.getElementById('posts')
+            postsDom.innerHTML = ''
             if (posts.length===0) {
                 postsDom.innerHTML = 'No Task Available'
             }
@@ -85,6 +99,86 @@
                     </div>
                 </div>
             `)
+        }
+
+        function handleCreateButton() {
+            const createBtn = document.getElementById('create_btn')
+            createBtn.addEventListener('click', () => {
+                showCreateForm()
+            })
+        }
+
+        function showCreateForm() {
+            const formCard = document.getElementById('create_form_card')
+            if (!formCard) {
+                const container = document.getElementById('container')
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="card create-form-card" id="create_form_card">
+                        <div class="card-header">
+                            Create Post
+                        </div>
+                        <div class="card-body">
+                            <div>
+                                <div class="form-group">
+                                    <labe>Title</labe>
+                                    <input type="text" name="title" id="title" class="form-control" placeholder="Enter post title" value="">
+                                    <span class="text-danger"><strong id="title_validation_error"></strong></span>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <labe>Description</labe>
+                                    <textarea name="content" id="content" class="form-control" rows="3" placeholder="Enter post content"></textarea>
+                                    <span class="text-danger"><strong id="content_validation_error"></strong></span>
+                                </div>
+                                <button class="btn btn-primary mt-3" id="create_form_submit_btn">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                `)
+                handleCreateFormSubmitButton()
+            }
+        }
+        function handleCreateFormSubmitButton() {
+            const createFormSubmitBtn = document.getElementById('create_form_submit_btn')
+            createFormSubmitBtn.addEventListener('click', () => {
+                const title = document.getElementById('title').value
+                const content = document.getElementById('content').value
+                const titleValidationError = document.getElementById('title_validation_error')
+                const contentValidationError = document.getElementById('content_validation_error')
+                titleValidationError.innerHTML = ''
+                contentValidationError.innerHTML = ''
+
+                axios({
+                        method: 'POST',
+                        url: "{{route('post.store')}}",
+                        data: {
+                            _token: "{{csrf_token()}}",
+                            title,
+                            content
+                        }
+                    })
+                        .then(res => res.data)
+                        .then(res => {
+                            if (res.success) {
+                                const formCard = document.getElementById('create_form_card')
+                                if (formCard) formCard.remove()
+                                loadTasks()
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            if (err.response.data.errors) {
+                                showValidationError(err.response.data.errors)
+                            }
+                        })
+            })
+        }
+
+
+        function showValidationError(errors) {
+            Object.keys(errors).forEach(key => {
+                const dom =  document.getElementById(key+'_validation_error')
+                dom.innerHTML = errors[key][0]
+            })
         }
     </script>
 @endsection

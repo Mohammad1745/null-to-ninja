@@ -7,9 +7,8 @@ Route::middleware(['auth', 'verified'])->prefix('/post')->as('post.')->group(fun
     Route::get('/', [PostController::class, 'index'])->name('index'); //post.index
 
     Route::get('/list', [PostController::class, 'list'])->name('list'); //post.index
-
-    Route::get('/create', [PostController::class, 'create'])->name('create');//post.create
     Route::post('/', [PostController::class, 'store'])->name('store');
+
     Route::get('/{id}', [PostController::class, 'show'])->name('show');
     Route::get('/{id}/edit', [PostController::class, 'edit'])->name('edit');
     Route::patch('/update', [PostController::class, 'update'])->name('update');
