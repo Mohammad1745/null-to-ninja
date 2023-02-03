@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'verified'])->prefix('/post')->as('post.')->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('index'); //post.index
 
-    Route::get('/list', [PostController::class, 'list'])->name('list'); //post.index
+    Route::get('/list', [PostController::class, 'getList'])->name('list'); //post.index
+    Route::get('/{id}', [PostController::class, 'getSingle'])->name('single');
     Route::post('/', [PostController::class, 'store'])->name('store');
 
-    Route::get('/{id}', [PostController::class, 'show'])->name('show');
     Route::get('/{id}/edit', [PostController::class, 'edit'])->name('edit');
     Route::patch('/update', [PostController::class, 'update'])->name('update');
     Route::get('/{id}/delete', [PostController::class, 'destroy'])->name('delete');

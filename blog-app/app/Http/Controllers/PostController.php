@@ -36,9 +36,18 @@ class PostController extends Controller
     /**
      * @return JsonResponse
      */
-    public function list (): JsonResponse
+    public function getList (): JsonResponse
     {
         return response()->json( $this->service->getList());
+    }
+
+    /**
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getSingle (int $id): JsonResponse
+    {
+        return response()->json( $this->service->getPost($id));
     }
 
     /**
@@ -48,16 +57,6 @@ class PostController extends Controller
     public function store (PostStoreRequest $request): JsonResponse
     {
         return response()->json( $this->service->store( $request->all()));
-    }
-
-    /**
-     * @param $id
-     * @return Application|Factory|View
-     */
-    public function show ($id): View|Factory|Application
-    {
-        $data['post'] = Post::find($id);
-        return view('post.show', $data);
     }
 
     /**

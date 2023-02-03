@@ -25,6 +25,22 @@ class PostService extends Service
         }
     }
 
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function getPost (int $id): array
+    {
+        try {
+            $post = Post::where('user_id', Auth::id())->where('id', $id)->first();
+
+            return $this->responseSuccess("Done!", ['post' => $post]);
+        }
+        catch (\Exception $exception) {
+            return $this->responseError($exception->getMessage());
+        }
+    }
+
     public function store (array $data)
     {
         try {
