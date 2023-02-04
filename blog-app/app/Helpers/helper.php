@@ -1,5 +1,10 @@
 <?php
 
+function baseUrl ()
+{
+    return "http://127.0.0.1:8001";
+}
+
 /**
  * @param $length
  * @return string
