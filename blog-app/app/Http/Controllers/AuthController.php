@@ -89,4 +89,16 @@ class AuthController extends Controller
             redirect()->route('login')->with('success', $response['message'])
             : redirect()->back()->with('error', $response['message']);
     }
+
+    /**
+     * @return RedirectResponse
+     */
+    public function logout (): RedirectResponse
+    {
+        $response = $this->service->logout();
+
+        return $response['success'] ?
+            redirect()->route('home')->with('success', $response['message'])
+            : redirect()->back()->with('error', $response['message']);
+    }
 }

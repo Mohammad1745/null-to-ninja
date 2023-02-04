@@ -79,4 +79,18 @@ class AuthService extends Service
             return $this->responseError($exception->getMessage());
         }
     }
+
+    /**
+     * @return array
+     */
+    public function logout (): array
+    {
+        try  {
+            Auth::logout();
+            return $this->responseSuccess("Logged Out Successful!");
+        }
+        catch (\Exception $exception) {
+            return $this->responseError($exception->getMessage());
+        }
+    }
 }

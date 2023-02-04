@@ -52,7 +52,7 @@ function handleEditButtons() {
     for (let i=0; i<editBtns.length; i++) {
         editBtns[i].addEventListener('click', function () {
             let postId = editBtns[i].getAttribute('data-id')
-            editPost(postId, loadPosts)
+            editPost(postId)
         })
     }
 }

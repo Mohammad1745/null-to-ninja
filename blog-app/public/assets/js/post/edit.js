@@ -1,4 +1,4 @@
-function editPost (postId, callback) {
+function editPost (postId, callback=null) {
     loadEditForm (postId, callback)
 }
 function loadEditForm (postId, callback) {
@@ -79,7 +79,8 @@ function handleEditFormSubmitButton(callback) {
                     const formCard = document.getElementById('edit_form_card')
                     if (formCard) formCard.remove()
                     hidePopupBg()
-                    callback(id)
+                    loadPosts()
+                    if (callback) callback(id)
                 }
             })
             .catch(err => {
@@ -96,11 +97,11 @@ function handleCloseEditFormBtn ()
     const button = document.getElementById('close_edit_form_btn')
     button.addEventListener('click', () => {
         hidePopupBg()
-        hideCreteFormPopup()
+        hideEditFormPopup()
     })
 }
 
-function hideCreteFormPopup () {
+function hideEditFormPopup () {
     const formCard = document.getElementById('edit_form_card')
     if (formCard) formCard.remove()
 }
