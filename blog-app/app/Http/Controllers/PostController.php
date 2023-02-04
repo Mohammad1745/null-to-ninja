@@ -60,50 +60,21 @@ class PostController extends Controller
     }
 
     /**
-     * @param $id
-     * @return Application|Factory|View
-     */
-    public function edit ($id): View|Factory|Application
-    {
-        $data['post'] = Post::find($id);
-        return view('post.edit', $data);
-    }
-
-    /**
      * @param PostUpdateRequest $request
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function update (PostUpdateRequest $request): RedirectResponse
+    public function update (PostUpdateRequest $request): JsonResponse
     {
-        $allData = $request->all();
-        $id = $allData['id'];
-        $post = Post::find($id);
-        if (is_null($post)) {
-            return redirect()->back()->with('error', "Post doesn't exist!");
-        }
-
-        $data =  [
-            'title' => $allData['title'],
-            'content' => $allData['content']
-        ];
-        Post::where('id', $id)->update($data);
-
-        return redirect()->route('post.show', $id)->with('success', "Post updated successfully.");
+        return response()->json( $this->service->update( $request->all()));
     }
 
     /**
      * @param $id
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function destroy ($id): RedirectResponse
+    public function destroy ($id): JsonResponse
     {
-        $post = Post::find($id);
-        if (is_null($post)) {
-            return redirect()->back()->with('error', "Post doesn't exist!");
-        }
-        $post->delete();
-
-        return redirect()->route('post.index')->with('success', "Post deleted successfully.");
+        return response()->json( $this->service->delete($id));
     }
 
     /**

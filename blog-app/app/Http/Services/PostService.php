@@ -55,4 +55,46 @@ class PostService extends Service
             return $this->responseError( $exception->getMessage());
         }
     }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function update (array $data): array
+    {
+        try {
+            $post = Post::where('user_id', Auth::id())->where('id', $data['id'])->first();
+            if (is_null($post)) {
+                return $this->responseError("Post doesn't exist!");
+            }
+            $post->update([
+                'title' => $data['title'],
+                'content' => $data['content']
+            ]);
+            return $this->responseSuccess("Post updated successfully!");
+        }
+        catch (\Exception $exception) {
+            return $this->responseError( $exception->getMessage());
+        }
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function delete (int $id): array
+    {
+        try {
+            $post = Post::where('user_id', Auth::id())->where('id', $id)->first();
+            if (is_null($post)) {
+                return $this->responseError("Post doesn't exist!");
+            }
+            $post->delete();
+
+            return $this->responseSuccess("Post deleted successfully.");
+        }
+        catch (\Exception $exception) {
+            return $this->responseError( $exception->getMessage());
+        }
+    }
 }

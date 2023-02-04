@@ -1,5 +1,4 @@
 function loadPosts () {
-    console.log("loadPosts")
     axios({
         method: 'GET',
         url: `${baseUrl}/post/list`
@@ -9,6 +8,8 @@ function loadPosts () {
             if (res.success) {
                 renderPosts(res.data.posts)
                 handleDetailsButtons()
+                handleEditButtons()
+                handleDeleteButtons()
             }
             else {
                 let postsDom = document.getElementById('posts')
@@ -46,4 +47,23 @@ function appendPost (post, index) {
     `)
 }
 
+function handleEditButtons() {
+    let editBtns = document.querySelectorAll('.edit-btn')
+    for (let i=0; i<editBtns.length; i++) {
+        editBtns[i].addEventListener('click', function () {
+            let postId = editBtns[i].getAttribute('data-id')
+            editPost(postId, loadPosts)
+        })
+    }
+}
+
+function handleDeleteButtons() {
+    let deleteBtns = document.querySelectorAll('.delete-btn')
+    for (let i=0; i<deleteBtns.length; i++) {
+        deleteBtns[i].addEventListener('click', function () {
+            let postId = deleteBtns[i].getAttribute('data-id')
+            deletePost(postId)
+        })
+    }
+}
 

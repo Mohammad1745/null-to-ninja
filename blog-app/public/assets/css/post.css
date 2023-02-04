@@ -6,7 +6,8 @@
     width: 100vw;
     background-color: rgba(0,0,0,0.5);
 }
-.create-form-card {
+.create-form-card,
+.edit-form-card {
     position: absolute;
     left: 50%;
     top: 50%;

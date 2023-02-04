@@ -17,6 +17,8 @@ function loadPost (postId) {
             if (res.success) {
                 showPostDetails(res.data.post)
                 handleClosePostDetailsBtn()
+                handleEditBtn()
+                handleDeleteBtn()
             }
             else {
                 console.log(res.message)
@@ -30,22 +32,21 @@ function showPostDetails (post) {
     const container = document.getElementById('container')
 
     container.insertAdjacentHTML('beforeend', `
-                <div class="card post-details-card" id="post_details_card">
-                    <div class="card-header d-flex justify-content-between">
-                        Post Details
-                        <button class="btn btn-dark" id="close_post_details_btn">x</button>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-header">${post.title}</div>
-                        <div class="card-body">${post.content}</div>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-info" href="">Edit</a>
-                        <a class="btn btn-danger" href=""
-                           onclick="return confirm('Do you want to delete?')">Delete</a>
-                    </div>
-                </div>
-            `)
+        <div class="card post-details-card" id="post_details_card">
+            <div class="card-header d-flex justify-content-between">
+                Post Details
+                <button class="btn btn-dark" id="close_post_details_btn">x</button>
+            </div>
+            <div class="card-body">
+                <div class="card-header">${post.title}</div>
+                <div class="card-body">${post.content}</div>
+            </div>
+            <div class="card-footer">
+                <span class="btn btn-info cursor-pointer" id="edit_btn" data-id="${post.id}">Edit</span>
+                <span class="btn btn-danger cursor-pointer" id="delete_btn" data-id="${post.id}">Delete</span>
+            </div>
+        </div>
+    `)
 }
 
 function handleClosePostDetailsBtn ()
@@ -54,6 +55,26 @@ function handleClosePostDetailsBtn ()
     button.addEventListener('click', () => {
         hidePopupBg()
         hidePostDetailsPopup()
+    })
+}
+function handleEditBtn ()
+{
+    const editBtn = document.getElementById('edit_btn')
+    editBtn.addEventListener('click', () => {
+        let postId = editBtn.getAttribute('data-id')
+        hidePopupBg()
+        hidePostDetailsPopup()
+        editPost(postId, loadPost)
+    })
+}
+function handleDeleteBtn ()
+{
+    const deleteBtn = document.getElementById('delete_btn')
+    deleteBtn.addEventListener('click', () => {
+        let postId = deleteBtn.getAttribute('data-id')
+        hidePopupBg()
+        hidePostDetailsPopup()
+        deletePost(postId)
     })
 }
 

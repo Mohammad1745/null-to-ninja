@@ -25,7 +25,9 @@
     <script src="{{asset("assets/js/post/config.js")}}"></script>
     <script src="{{asset("assets/js/post/index.js")}}"></script>
     <script src="{{asset("assets/js/post/details.js")}}"></script>
+    <script src="{{asset("assets/js/post/delete.js")}}"></script>
     <script src="{{asset("assets/js/post/create.js")}}"></script>
+    <script src="{{asset("assets/js/post/edit.js")}}"></script>
     <script>
         let baseUrl = "{{baseUrl()}}";
         let csrfToken = "{{csrf_token()}}";
