@@ -7,24 +7,25 @@ function handleDetailsButtons() {
         })
     }
 }
-function loadPost (postId) {
-    axios({
-        method: 'GET',
-        url: `${baseUrl}/post/${postId}`
-    })
-        .then(res => res.data)
-        .then(res => {
-            if (res.success) {
-                showPostDetails(res.data.post)
-                handleClosePostDetailsBtn()
-                handleEditBtn()
-                handleDeleteBtn()
-            }
-            else {
-                console.log(res.message)
-            }
+async function loadPost (postId) {
+    try {
+        let res  = await axios({
+            method: 'GET',
+            url: `${baseUrl}/post/${postId}`
         })
-        .catch(err => console.log('err: ', err))
+        res = res.data
+        if (res.success) {
+            showPostDetails(res.data.post)
+            handleClosePostDetailsBtn()
+            handleEditBtn()
+            handleDeleteBtn()
+        } else {
+            console.log(res.message)
+        }
+    }
+    catch(err) {
+        console.log('err: ', err)
+    }
 }
 function showPostDetails (post) {
     hidePostDetailsPopup()

@@ -40,7 +40,7 @@ function showCreateForm() {
 }
 function handleCreateFormSubmitButton() {
     const createFormSubmitBtn = document.getElementById('create_form_submit_btn')
-    createFormSubmitBtn.addEventListener('click', () => {
+    createFormSubmitBtn.addEventListener('click', async () => {
         const title = document.getElementById('title').value
         const content = document.getElementById('content').value
         const titleValidationError = document.getElementById('title_validation_error')
@@ -48,30 +48,32 @@ function handleCreateFormSubmitButton() {
         titleValidationError.innerHTML = ''
         contentValidationError.innerHTML = ''
 
-        axios({
-            method: 'POST',
-            url: `${baseUrl}/post`,
-            data: {
-                _token: csrfToken,
-                title,
-                content
+        try{
+            let res = await axios({
+                method: 'POST',
+                url: `${baseUrl}/post`,
+                data: {
+                    _token: csrfToken,
+                    title,
+                    content
+                }
+            })
+
+            res = res.data
+            if (res.success) {
+                const formCard = document.getElementById('create_form_card')
+                if (formCard) formCard.remove()
+                hidePopupBg()
+                loadPosts()
             }
-        })
-            .then(res => res.data)
-            .then(res => {
-                if (res.success) {
-                    const formCard = document.getElementById('create_form_card')
-                    if (formCard) formCard.remove()
-                    hidePopupBg()
-                    loadPosts()
-                }
-            })
-            .catch(err => {
-                console.log(err)
-                if (err.response.data.errors) {
-                    showValidationError(err.response.data.errors)
-                }
-            })
+
+        }
+        catch(err) {
+            console.log(err)
+            if (err.response.data.errors) {
+                showValidationError(err.response.data.errors)
+            }
+        }
     })
 }
 

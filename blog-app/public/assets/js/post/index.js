@@ -1,22 +1,24 @@
-function loadPosts () {
-    axios({
-        method: 'GET',
-        url: `${baseUrl}/post/list`
-    })
-        .then(res => res.data)
-        .then(res => {
-            if (res.success) {
-                renderPosts(res.data.posts)
-                handleDetailsButtons()
-                handleEditButtons()
-                handleDeleteButtons()
-            }
-            else {
-                let postsDom = document.getElementById('posts')
-                postsDom.innerHTML = res.message
-            }
+async function loadPosts () {
+    try {
+        let res = await axios({
+            method: 'GET',
+            url: `${baseUrl}/post/list`
         })
-        .catch(err => console.log('err: ', err))
+        res = res.data
+        if (res.success) {
+            renderPosts(res.data.posts)
+            handleDetailsButtons()
+            handleEditButtons()
+            handleDeleteButtons()
+        }
+        else {
+            let postsDom = document.getElementById('posts')
+            postsDom.innerHTML = res.message
+        }
+    }
+    catch (err) {
+        console.log('err: ', err)
+    }
 }
 
 function renderPosts(posts) {

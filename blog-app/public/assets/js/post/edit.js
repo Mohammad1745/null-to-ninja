@@ -1,23 +1,24 @@
 function editPost (postId, callback=null) {
     loadEditForm (postId, callback)
 }
-function loadEditForm (postId, callback) {
-    axios({
-        method: 'GET',
-        url: `${baseUrl}/post/${postId}`
-    })
-        .then(res => res.data)
-        .then(res => {
-            if (res.success) {
-                showEditForm(res.data.post)
-                handleEditFormSubmitButton(callback)
-                handleCloseEditFormBtn()
-            }
-            else {
-                console.log(res.message)
-            }
+async function loadEditForm (postId, callback) {
+    try {
+        let res = await axios({
+            method: 'GET',
+            url: `${baseUrl}/post/${postId}`
         })
-        .catch(err => console.log('err: ', err))
+        res = res.data
+        if (res.success) {
+            showEditForm(res.data.post)
+            handleEditFormSubmitButton(callback)
+            handleCloseEditFormBtn()
+        } else {
+            console.log(res.message)
+        }
+    }
+    catch(err) {
+        console.log('err: ', err)
+    }
 }
 
 function showEditForm(post) {
@@ -54,7 +55,7 @@ function showEditForm(post) {
 }
 function handleEditFormSubmitButton(callback) {
     const editFormSubmitBtn = document.getElementById('edit_form_submit_btn')
-    editFormSubmitBtn.addEventListener('click', () => {
+    editFormSubmitBtn.addEventListener('click', async () => {
         const id = document.getElementById('post_id').value
         const title = document.getElementById('title').value
         const content = document.getElementById('content').value
@@ -63,32 +64,32 @@ function handleEditFormSubmitButton(callback) {
         titleValidationError.innerHTML = ''
         contentValidationError.innerHTML = ''
 
-        axios({
-            method: 'POST',
-            url: `${baseUrl}/post/update`,
-            data: {
-                _token: csrfToken,
-                id,
-                title,
-                content
+        try {
+            let res = await axios({
+                method: 'POST',
+                url: `${baseUrl}/post/update`,
+                data: {
+                    _token: csrfToken,
+                    id,
+                    title,
+                    content
+                }
+            })
+            res = res.data
+            if (res.success) {
+                const formCard = document.getElementById('edit_form_card')
+                if (formCard) formCard.remove()
+                hidePopupBg()
+                loadPosts()
+                if (callback) callback(id)
             }
-        })
-            .then(res => res.data)
-            .then(res => {
-                if (res.success) {
-                    const formCard = document.getElementById('edit_form_card')
-                    if (formCard) formCard.remove()
-                    hidePopupBg()
-                    loadPosts()
-                    if (callback) callback(id)
-                }
-            })
-            .catch(err => {
-                console.log(err)
-                if (err.response.data.errors) {
-                    showValidationError(err.response.data.errors)
-                }
-            })
+        }
+       catch(err) {
+            console.log(err)
+            if (err.response.data.errors) {
+                showValidationError(err.response.data.errors)
+            }
+        }
     })
 }
 
